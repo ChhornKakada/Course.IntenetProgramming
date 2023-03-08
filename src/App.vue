@@ -31,8 +31,8 @@
             <button type="button" class="btn btn-warning">M+</button>
           </td>
           <td>
-            <button type="button" class="btn btn-light">
-              <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+            <button v-on:click="showNumber('<-')" type="button" class="btn btn-light">
+              <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
             </button>
           </td>
         </tr>
@@ -50,7 +50,7 @@
             <button v-on:click="changeOper('/')" type="button" class="btn btn-secondary">÷</button>
           </td>
           <td>
-            <button v-on:click="showNumber('-')" type="button" class="btn btn-light">+/-</button>
+            <button v-on:click="showNumber('+/-')" type="button" class="btn btn-light">+/-</button>
           </td>
         </tr>
         <tr>
@@ -122,9 +122,12 @@ export default {
       isAfterResult: false,
       firstNum: "0",
       secNum: "",
+      isChangeStatusNumber: false,
     };
   },
   methods: {
+
+
 
     // change the status of a number, - to +, + to -
     changeStatusNumber(number) {
@@ -133,10 +136,21 @@ export default {
 
     // to add another input
     continueNumber(input, number) {
-      if (input == "-") number = this.changeStatusNumber(number);
+      if (input == "+/-") number = this.changeStatusNumber(number);
+      else if(input == '<-') { // let ~ equals to backspace
+        number = number.slice(0, -1);
+      }
       else {
+        if (input == ".") {
+          for (let i=0; i<number.length; i++) {
+            if (number[i] == ".") {
+              return number;
+            }
+          }
+        }
         number += input;
-        if (number[0] == '0') number = number.slice(1);
+        // if (number[0] == '0' && input != ".") number = number.slice(1);
+        if (number[0] == '0' && number[1] != ".") number = number.slice(1);
       }
       return number;
     },
@@ -145,8 +159,14 @@ export default {
     showNumber(input) {
       if (this.operation == "") {
         if (this.isAfterResult == true) {
-          this.isAfterResult = !this.isAfterResult;
-          this.firstNum = input;
+          if (input == "+/-") {
+            this.firstNum = this.continueNumber(input, this.firstNum);
+          } else {
+            if (input == ".") this.firstNum = "0.";
+            else if (input == "<-") this.firstNum = "0";
+            else this.firstNum = input;
+            this.isAfterResult = false;
+          }
         } else {
           this.firstNum = this.continueNumber(input, this.firstNum);
         }
@@ -156,11 +176,9 @@ export default {
       }
     },
 
-    // for operation
-    changeOper(oper) {
-      if (oper == '=') {
-        this.firstNum = Number(this.firstNum);
-        this.secNum = Number(this.secNum);
+    operate() {
+      this.firstNum = parseFloat(this.firstNum);
+        this.secNum = parseFloat(this.secNum);
         if (this.operation == "+") {
           this.firstNum = this.firstNum + this.secNum;
         } else if (this.operation == "-") {
@@ -170,10 +188,18 @@ export default {
         } else if (this.operation == "/") {
           this.firstNum = this.firstNum / this.secNum;
         }
+        this.firstNum = this.firstNum.toFixed(4);
         this.secNum = "";
         this.operation = "";
         this.isAfterResult = true;
+    },
+
+    // for operation
+    changeOper(oper) {
+      if ((oper == '=')) {
+        this.operate();
       } else {
+        if (this.secNum != "") this.operate();
         this.operation = oper;
         this.isAfterResult = false;
       }
