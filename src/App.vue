@@ -149,7 +149,6 @@ export default {
           }
         }
         number += input;
-        // if (number[0] == '0' && input != ".") number = number.slice(1);
         if (number[0] == '0' && number[1] != ".") number = number.slice(1);
       }
       return number;
