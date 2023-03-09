@@ -148,8 +148,12 @@ export default {
             }
           }
         }
-        number += input;
-        if (number[0] == '0' && number[1] != ".") number = number.slice(1);
+
+        if (number == "" && input == ".") number = "0.";
+        else number += input;
+
+        if (number[0] == ".") number = "0.";
+        else if (number[0] == '0' && number[1] != ".") number = number.slice(1);
       }
       return number;
     },
