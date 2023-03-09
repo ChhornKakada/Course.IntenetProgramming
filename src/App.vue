@@ -25,10 +25,10 @@
             <button type="button" class="btn btn-warning">MR</button>
           </td>
           <td>
-            <button type="button" class="btn btn-warning">M-</button>
+            <button v-on:click="decrease()" type="button" class="btn btn-warning">M-</button>
           </td>
           <td>
-            <button type="button" class="btn btn-warning">M+</button>
+            <button v-on:click="increase()" type="button" class="btn btn-warning">M+</button>
           </td>
           <td>
             <button v-on:click="showNumber('<-')" type="button" class="btn btn-light">
@@ -123,11 +123,25 @@ export default {
       firstNum: "0",
       secNum: "",
       isChangeStatusNumber: false,
+      M: "",
     };
   },
   methods: {
 
+    // increase
+    increase() {
+      this.M = this.firstNum;
+      this.M = Number(this.M);
+      this.firstNum = Number(this.M);
+      this.firstNum= this.firstNum + this.M;
+    },
 
+    decrease() {
+      this.M = this.firstNum;5
+      this.M = Number(this.M);
+      this.firstNum = Number(this.M);
+      this.firstNum= this.firstNum - this.M;
+    },
 
     // change the status of a number, - to +, + to -
     changeStatusNumber(number) {
